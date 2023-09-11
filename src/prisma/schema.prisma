@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String?
+  email         String?        @unique
+  accounts      Account[]
+  sessions      Session[]
+  username      String         @unique
+  address       String         @unique
+  subscriptions Subscription[]
+  pass          SukuriPass?    @relation(fields: [sukuriPassId], references: [id])
+  sukuriPassId  String?
+  Project       Project[]
+  balances      Balance[]
+}
+
+model Subscription {
+  id              String      @id @default(uuid())
+  userId          String
+  projectId       String
+  tierId          String
+  last_processed  DateTime
+  expires         DateTime
+  should_continue Boolean
+  priority        Int         @unique
+  user            User        @relation(fields: [userId], references: [id])
+  project         Project     @relation(fields: [projectId], references: [id])
+  tier            ProjectTier @relation(fields: [tierId], references: [id])
+
+  @@unique([userId, projectId, tierId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model SukuriPass {
+  id         String  @id @unique @default(uuid())
+  trim       String?
+  background String?
+  foil       String?
+  User       User[]
+}
+
+model Project {
+  id                String           @id @unique @default(uuid())
+  name              String           @unique
+  short_description String
+  long_description  String
+  thumbnail_image   String?
+  large_image       String?
+  chain_id          Int
+  member_count      Int?
+  is_erc721         Boolean
+  is_featured       Boolean?
+  accepted_payments ProjectPayment[]
+  tiers             ProjectTier[]
+  subscriptions     Subscription[]
+  userId            String?
+  User              User?            @relation(fields: [userId], references: [id])
+}
+
+model Balance {
+  id            String        @id @default(uuid())
+  userId        String
+  token         String
+  balance       BigInt
+  updatedAt     DateTime      @default(now())
+  user          User          @relation(fields: [userId], references: [id])
+  PaymentOption PaymentOption @relation(fields: [token], references: [token])
+
+  @@unique([userId, token])
+}
+
+model PaymentOption {
+  token    String           @id
+  name     String
+  symbol   String
+  is_eth   Boolean
+  projects ProjectPayment[]
+  balances Balance[]
+}
+
+model ProjectPayment {
+  projectId String
+  token     String
+  Project   Project       @relation(fields: [projectId], references: [id])
+  Payment   PaymentOption @relation(fields: [token], references: [token])
+
+  @@id([projectId, token])
+}
+
+model ProjectTier {
+  id                       String         @id @unique @default(uuid())
+  address                  String
+  tier_id                  Int
+  name                     String
+  price                    String
+  unit                     String
+  supply                   Int
+  filled                   Int
+  subscription_length      Int
+  subscription_length_unit String
+  description              String
+  features                 String[]
+  Project                  Project?       @relation(fields: [projectId], references: [id])
+  projectId                String?
+  Subscription             Subscription[]
+}
