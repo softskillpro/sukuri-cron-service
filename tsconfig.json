@@ -5,7 +5,19 @@
     "target": "es6",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["bun-types"],
   },
-  "lib": ["es2021"]
+  "lib": ["es2021"],
+  "module": "es2021",
+  "target": "es2021",
+  "moduleResolution": "bundler",
+  "noEmit": true,
+  "allowImportingTsExtensions": true,
+  "moduleDetection": "force",
+  "allowJs": true, // allow importing `.js` from `.ts`
+  "esModuleInterop": true, // allow default imports for CommonJS modules
+  "strict": true,
+  "forceConsistentCasingInFileNames": true,
+  "skipLibCheck": true
 }
