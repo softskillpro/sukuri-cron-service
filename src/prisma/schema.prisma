@@ -144,4 +144,5 @@ model ProjectTier {
   Project                  Project?       @relation(fields: [projectId], references: [id])
   projectId                String?
   Subscription             Subscription[]
+  
 }

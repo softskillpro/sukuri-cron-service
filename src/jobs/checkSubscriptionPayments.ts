@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import amqplib from 'amqplib';
-
+import { config } from 'dotenv';
 /**
  * Represents a payment option with details about a specific type of token.
  */
@@ -56,7 +56,8 @@ interface RabbitMQMessage {
 }
 
 const prisma = new PrismaClient();
-const RABBITMQ_URL = 'amqps://tbrsxpvd:ZOhjfpDOVDwMGeMCMU-2jgMf2PpG0bbX@albatross.rmq.cloudamqp.com/tbrsxpvd';
+const RABBITMQ_URL = process.env.RABBIT_MQ; 
+
 
 /**
  * Creates the appropriate message data based on the event type and various other parameters.
