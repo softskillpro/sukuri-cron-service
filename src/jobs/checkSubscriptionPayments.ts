@@ -56,7 +56,7 @@ interface RabbitMQMessage {
 }
 
 const prisma = new PrismaClient();
-const RABBITMQ_URL = process.env.RABBIT_MQ; 
+const RABBITMQ_URL = process.env.RABBIT_MQ;
 
 
 /**
@@ -154,8 +154,15 @@ async function main() {
                 if (message.event_type === 'burn') {
                     message.data.expiry = subscription.expires.toISOString();
                 }
+                const ttlMilliseconds = subscription.expires.getTime() - new Date().getTime();
 
-                await channel.sendToQueue('subscription-queue', Buffer.from(JSON.stringify(message)));
+                const ttlValue = Math.max(ttlMilliseconds, 0);
+
+                const messageProperties = {
+                    expiration: ttlValue.toString()
+                };
+
+                await channel.sendToQueue('wait-queue', Buffer.from(JSON.stringify(message)), messageProperties);
             }
         }
 
