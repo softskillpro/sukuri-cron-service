@@ -1,0 +1,15 @@
+version: '2'
+services:
+  rabbitmq:
+    container_name: sukuri-rabbitmq
+    image: marketplace.gcr.io/google/rabbitmq3
+    environment:      
+      - "RABBITMQ_DEFAULT_USER=ajones"
+      - "RABBITMQ_DEFAULT_PASS=AjonesPassword1"
+      - "RABBITMQ_DEFAULT_VHOST='vhost'"
+    ports:
+      - '4369:4369'
+      - '5671:5671'
+      - '5672:5672'
+      - '25672:25672'
+     

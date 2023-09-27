@@ -1,0 +1,30 @@
+{
+    "event_type": "burn" | "pay" | "mint",
+    "data": {
+      "burn": {
+        "subscription_id": "string",
+        "tier_id": "string",
+        "expiry": "datetime"        
+      },
+      "pay": {
+        "subscription_id": "string",
+        "payment_option": {
+          "token": "string",
+          "name": "string",
+          "symbol": "string",
+          "is_eth": "boolean"
+        },
+        "tier_id": "string",
+        "expiry": "datetime",
+        "amount": "number"        
+      },
+      "mint": {
+        "tier_id": "string",
+        "expiry": "datetime"
+      }
+    },
+    "submitted_at": "datetime",
+    "user_id": "string",
+    "project_id": "string"
+  }
+  
